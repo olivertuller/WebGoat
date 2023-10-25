@@ -1,0 +1,26 @@
+name: Mend CLI Scan
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+        runs-on: ubuntu-latest
+
+        steps:
+        - uses: actions/checkout@v3
+        # Add your package manager build here
+        # name: Build with NPM
+        # run: npm install
+
+        - name: Mend CLI Scan
+          env:
+            MEND_EMAIL: ${{secrets.MEND_EMAIL}}
+            MEND_USER_KEY: ${{secrets.MEND_USER_KEY}}
+            MEND_URL: https://saas-eu.mend.io
+          run: |
+            echo Downloading Mend CLI
+            curl -LJO https://downloads.mend.io/production/unified/latest/linux_amd64/mend && chmod +x mend
+            echo Start Mend CLI scan
+            ./mend dep -u
+            ./mend code --remediate
